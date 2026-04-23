@@ -37,13 +37,13 @@ This is a **multi-agent expert system** specializing in China's public REITs and
 
 ### Industry Coverage
 
-| Agent | Asset Classes |
-|-------|--------------|
-| `energy-asset-analyst` | Wind power, PV, Hydro, Gas-fired power, Energy storage |
-| `utility-asset-analyst` | Water supply, Wastewater, Heating, Gas supply, Waste-to-energy |
-| `transport-asset-analyst` | Highways, Metro/Rail, Ports, Logistics warehouses |
-| `property-asset-analyst` | Industrial parks, Data centers, Malls, Offices, Hotels |
-| `housing-asset-analyst` | Affordable rental housing, Long-term rental apartments |
+| Agent                     | Asset Classes                                                  |
+| ------------------------- | -------------------------------------------------------------- |
+| `energy-asset-analyst`    | Wind power, PV, Hydro, Gas-fired power, Energy storage         |
+| `utility-asset-analyst`   | Water supply, Wastewater, Heating, Gas supply, Waste-to-energy |
+| `transport-asset-analyst` | Highways, Metro/Rail, Ports, Logistics warehouses              |
+| `property-asset-analyst`  | Industrial parks, Data centers, Malls, Offices, Hotels         |
+| `housing-asset-analyst`   | Affordable rental housing, Long-term rental apartments         |
 
 ## Installation
 
@@ -57,6 +57,7 @@ This is a **multi-agent expert system** specializing in China's public REITs and
 Clone this repository and run the install script:
 
 **Linux/macOS:**
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/openclaw-reits-expert.git
 cd openclaw-reits-expert
@@ -65,6 +66,7 @@ chmod +x install.sh
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 git clone https://github.com/YOUR_USERNAME/openclaw-reits-expert.git
 cd openclaw-reits-expert
@@ -74,12 +76,14 @@ cd openclaw-reits-expert
 ### Method 2: Manual Installation
 
 1. **Clone the repository:**
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/openclaw-reits-expert.git
 cd openclaw-reits-expert
 ```
 
-2. **Copy workspace directories to OpenClaw:**
+1. **Copy workspace directories to OpenClaw:**
+
 ```bash
 # Linux/macOS
 cp -r workspace-* ~/.openclaw/
@@ -88,7 +92,8 @@ cp -r workspace-* ~/.openclaw/
 Copy-Item -Path "workspace-*" -Destination "$env:USERPROFILE\.openclaw\" -Recurse -Force
 ```
 
-3. **Register all agents:**
+1. **Register all agents:**
+
 ```bash
 openclaw agents add reits-expert --workspace ~/.openclaw/workspace-reits-expert
 openclaw agents add energy-asset-analyst --workspace ~/.openclaw/workspace-energy-asset-analyst
@@ -103,12 +108,14 @@ openclaw agents add esg-analyst --workspace ~/.openclaw/workspace-esg-analyst
 openclaw agents add report-writer --workspace ~/.openclaw/workspace-report-writer
 ```
 
-4. **Configure master agent permissions:**
+1. **Configure master agent permissions:**
+
 ```bash
 openclaw config set agents.list[0].subagents.allowAgents '["energy-asset-analyst","utility-asset-analyst","transport-asset-analyst","property-asset-analyst","housing-asset-analyst","ops-supervisor","struct-designer","market-researcher","esg-analyst","report-writer"]' --json
 ```
 
-5. **Configure routing:**
+1. **Configure routing:**
+
 ```bash
 openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json
 ```
@@ -116,6 +123,7 @@ openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json
 ### Method 3: OpenClaw Plugin Install (Future)
 
 If OpenClaw supports plugin installation from GitHub:
+
 ```bash
 openclaw plugins install github.com/YOUR_USERNAME/openclaw-reits-expert
 ```
@@ -196,13 +204,13 @@ openclaw-reits-expert/
 
 When the master agent receives an asset valuation task, it automatically routes to the appropriate industry analyst based on keywords:
 
-| Keywords | Target Agent |
-|----------|-------------|
-| Wind, PV, Hydro, Power plant, Energy storage | `energy-asset-analyst` |
-| Water supply, Sewage, Heating, Gas, Waste-to-energy | `utility-asset-analyst` |
-| Highway, Metro, Port, Logistics warehouse | `transport-asset-analyst` |
-| Industrial park, Data center, Mall, Office, Hotel | `property-asset-analyst` |
-| Affordable housing, Rental apartment | `housing-asset-analyst` |
+| Keywords                                            | Target Agent              |
+| --------------------------------------------------- | ------------------------- |
+| Wind, PV, Hydro, Power plant, Energy storage        | `energy-asset-analyst`    |
+| Water supply, Sewage, Heating, Gas, Waste-to-energy | `utility-asset-analyst`   |
+| Highway, Metro, Port, Logistics warehouse           | `transport-asset-analyst` |
+| Industrial park, Data center, Mall, Office, Hotel   | `property-asset-analyst`  |
+| Affordable housing, Rental apartment                | `housing-asset-analyst`   |
 
 ### Task Complexity Levels
 
@@ -265,7 +273,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 - Built for [OpenClaw](https://github.com/openclaw) multi-agent framework
 - Inspired by China's public REITs market development
 
----
+***
 
 ## 中文说明
 
@@ -276,6 +284,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 **核心架构**：1个主Agent + 10个子Agent，覆盖REITs全生命周期（发行前→存续期→退出）。
 
 **5大行业垂直分析师**：
+
 - 能源类：风电、光伏、水电、燃气发电、储能
 - 公用事业：供水、污水、供热、供气、垃圾焚烧
 - 交通物流：高速、地铁、港口、物流仓储
@@ -302,8 +311,8 @@ openclaw chat --agent reits-expert
 
 系统应自动识别资产类别并调度对应的energy-asset-analyst执行估值。
 
----
+***
 
-**Maintainer**: [YOUR_NAME](https://github.com/YOUR_USERNAME)  
-**Version**: 1.0.0  
+**Maintainer**: ZHANGWEI232\
+**Version**: 1.0.0\
 **Last Updated**: 2025-04-23
