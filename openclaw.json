@@ -1,0 +1,117 @@
+{
+  "$schema": "https://openclaw.dev/schemas/config.schema.json",
+  "_comment": "OpenClaw REITs Expert System - Configuration Template. Replace ${HOME} with the absolute path to your home directory before use, OR use this as a reference and run install.sh / install.ps1 to apply settings via 'openclaw config set'.",
+
+  "agents": {
+    "list": [
+      {
+        "agentId": "reits-expert",
+        "workspace": "${HOME}/.openclaw/workspace-reits-expert",
+        "model": "<高智能模型>",
+        "_comment": "Master agent - the only entrypoint. Routes all incoming messages and dispatches sub-agents.",
+        "subagents": {
+          "allowAgents": [
+            "energy-asset-analyst",
+            "utility-asset-analyst",
+            "transport-asset-analyst",
+            "property-asset-analyst",
+            "housing-asset-analyst",
+            "ops-supervisor",
+            "struct-designer",
+            "market-researcher",
+            "esg-analyst",
+            "report-writer"
+          ]
+        }
+      },
+      {
+        "agentId": "energy-asset-analyst",
+        "workspace": "${HOME}/.openclaw/workspace-energy-asset-analyst",
+        "model": "<高智能模型>",
+        "_comment": "Energy assets: wind, solar, hydro, gas-fired, district heating, storage."
+      },
+      {
+        "agentId": "utility-asset-analyst",
+        "workspace": "${HOME}/.openclaw/workspace-utility-asset-analyst",
+        "model": "<高智能模型>",
+        "_comment": "Utilities: water, sewage, gas, district heating, waste-to-energy."
+      },
+      {
+        "agentId": "transport-asset-analyst",
+        "workspace": "${HOME}/.openclaw/workspace-transport-asset-analyst",
+        "model": "<高智能模型>",
+        "_comment": "Transport & logistics: highway, rail transit, ports, logistics warehousing (high-standard / cold-chain)."
+      },
+      {
+        "agentId": "property-asset-analyst",
+        "workspace": "${HOME}/.openclaw/workspace-property-asset-analyst",
+        "model": "<高智能模型>",
+        "_comment": "Industrial / commercial property: industrial parks, IDC, mall, community retail, office, hotel."
+      },
+      {
+        "agentId": "housing-asset-analyst",
+        "workspace": "${HOME}/.openclaw/workspace-housing-asset-analyst",
+        "model": "<高智能模型>",
+        "_comment": "Affordable rental housing & long-term rental apartments."
+      },
+      {
+        "agentId": "ops-supervisor",
+        "workspace": "${HOME}/.openclaw/workspace-ops-supervisor",
+        "model": "<高智能模型>",
+        "_comment": "Holding-period monitoring, KPI dashboards, red/yellow/blue risk warnings."
+      },
+      {
+        "agentId": "struct-designer",
+        "workspace": "${HOME}/.openclaw/workspace-struct-designer",
+        "model": "<高智能模型>",
+        "_comment": "Transaction structuring, credit enhancement, tax planning, expansion / exit paths."
+      },
+      {
+        "agentId": "market-researcher",
+        "workspace": "${HOME}/.openclaw/workspace-market-researcher",
+        "model": "<中等模型>",
+        "_comment": "Market intelligence, regulatory tracking, comparable transaction database."
+      },
+      {
+        "agentId": "esg-analyst",
+        "workspace": "${HOME}/.openclaw/workspace-esg-analyst",
+        "model": "<中等模型>",
+        "_comment": "ESG assessment, climate risk quantification, carbon accounting, green finance certification."
+      },
+      {
+        "agentId": "report-writer",
+        "workspace": "${HOME}/.openclaw/workspace-report-writer",
+        "model": "<轻量模型>",
+        "_comment": "Document drafting, cross-agent data integration, format compliance."
+      }
+    ]
+  },
+
+  "bindings": [
+    {
+      "agentId": "reits-expert",
+      "match": {},
+      "_comment": "Unified entrypoint - all messages route to the master agent, which dispatches sub-agents internally."
+    }
+  ],
+
+  "_examples": {
+    "alternative_routing_by_keyword": {
+      "_comment": "Optional: route directly to a sub-agent when the message contains specific keywords. Uncomment and adapt as needed.",
+      "bindings": [
+        {
+          "agentId": "energy-asset-analyst",
+          "match": { "keywords": ["风电", "光伏", "储能", "新能源"] }
+        },
+        {
+          "agentId": "housing-asset-analyst",
+          "match": { "keywords": ["保租房", "长租公寓", "保障性租赁"] }
+        },
+        {
+          "agentId": "reits-expert",
+          "match": {}
+        }
+      ]
+    }
+  }
+}

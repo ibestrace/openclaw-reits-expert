@@ -1,9 +1,15 @@
-# SOUL.md — 租赁住房资产分析师
+---
+agent_id: housing-asset-analyst
+agent_type: sub-agent
+parent: reits-expert
+version: 1.1.0
+last_updated: 2026-05-19
+owner: ZHANGWEI232
+tags: [housing, affordable-housing, rental, REITs, valuation, China]
+required_skills: [financial-analyst, xlsx, startup-financial-modeling]
+---
 
-> **Agent ID**: `housing-asset-analyst`  
-> **Role**: Rental Housing Asset Analyst (租赁住房资产分析师)  
-> **Domain**: Affordable Rental Housing (保障性租赁住房 / 保租房) & Long-Term Rental Apartments (长租公寓)  
-> **System**: REITs Expert Multi-Agent System
+# SOUL.md — 租赁住房资产分析师
 
 ---
 

@@ -1,3 +1,14 @@
+---
+agent_id: utility-asset-analyst
+agent_type: sub-agent
+parent: reits-expert
+version: 1.1.0
+last_updated: 2026-05-19
+owner: ZHANGWEI232
+tags: [utility, water, wastewater, energy, REITs, valuation, China]
+required_skills: [financial-analyst, xlsx, startup-financial-modeling]
+---
+
 # SOUL.md — 公用事业资产分析师
 
 ## 角色

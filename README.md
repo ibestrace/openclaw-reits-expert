@@ -3,6 +3,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > A professional multi-agent system for China's Public REITs (Real Estate Investment Trusts) and real estate securitization, built on [OpenClaw](https://github.com/openclaw).
+>
+> **Updated for 2025-2026 regulatory framework**: Covers the July 2024 normalization notice, the 2025 industry scope expansion (data centers, urban renewal, specialized warehouses), and the December 2025 commercial REITs pilot (malls, hotels, offices).
 
 ## System Overview
 
@@ -42,8 +44,10 @@ This is a **multi-agent expert system** specializing in China's public REITs and
 | `energy-asset-analyst`    | Wind power, PV, Hydro, Gas-fired power, Energy storage         |
 | `utility-asset-analyst`   | Water supply, Wastewater, Heating, Gas supply, Waste-to-energy |
 | `transport-asset-analyst` | Highways, Metro/Rail, Ports, Logistics warehouses              |
-| `property-asset-analyst`  | Industrial parks, Data centers, Malls, Offices, Hotels         |
+| `property-asset-analyst`  | Industrial parks, Data centers, Malls, Offices, Hotels, Urban renewal |
 | `housing-asset-analyst`   | Affordable rental housing, Long-term rental apartments         |
+
+**New in 2025 scope expansion**: Data centers, urban heating, farm produce markets, urban renewal projects, and specialized warehouses are now explicitly eligible under the NDRC 2025 Industry Scope List. Commercial REITs (malls, hotels, offices) launched pilot in December 2025.
 
 ## Installation
 
@@ -59,7 +63,7 @@ Clone this repository and run the install script:
 **Linux/macOS:**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/openclaw-reits-expert.git
+git clone https://github.com/ZHANGWEI232/openclaw-reits-expert.git
 cd openclaw-reits-expert
 chmod +x install.sh
 ./install.sh
@@ -68,7 +72,7 @@ chmod +x install.sh
 **Windows (PowerShell):**
 
 ```powershell
-git clone https://github.com/YOUR_USERNAME/openclaw-reits-expert.git
+git clone https://github.com/ZHANGWEI232/openclaw-reits-expert.git
 cd openclaw-reits-expert
 .\install.ps1
 ```
@@ -78,11 +82,11 @@ cd openclaw-reits-expert
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/openclaw-reits-expert.git
+git clone https://github.com/ZHANGWEI232/openclaw-reits-expert.git
 cd openclaw-reits-expert
 ```
 
-1. **Copy workspace directories to OpenClaw:**
+2. **Copy workspace directories to OpenClaw:**
 
 ```bash
 # Linux/macOS
@@ -92,7 +96,7 @@ cp -r workspace-* ~/.openclaw/
 Copy-Item -Path "workspace-*" -Destination "$env:USERPROFILE\.openclaw\" -Recurse -Force
 ```
 
-1. **Register all agents:**
+3. **Register all agents:**
 
 ```bash
 openclaw agents add reits-expert --workspace ~/.openclaw/workspace-reits-expert
@@ -108,13 +112,13 @@ openclaw agents add esg-analyst --workspace ~/.openclaw/workspace-esg-analyst
 openclaw agents add report-writer --workspace ~/.openclaw/workspace-report-writer
 ```
 
-1. **Configure master agent permissions:**
+4. **Configure master agent permissions:**
 
 ```bash
 openclaw config set agents.list[0].subagents.allowAgents '["energy-asset-analyst","utility-asset-analyst","transport-asset-analyst","property-asset-analyst","housing-asset-analyst","ops-supervisor","struct-designer","market-researcher","esg-analyst","report-writer"]' --json
 ```
 
-1. **Configure routing:**
+5. **Configure routing:**
 
 ```bash
 openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json
@@ -125,7 +129,7 @@ openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json
 If OpenClaw supports plugin installation from GitHub:
 
 ```bash
-openclaw plugins install github.com/YOUR_USERNAME/openclaw-reits-expert
+openclaw plugins install github.com/ZHANGWEI232/openclaw-reits-expert
 ```
 
 ## Verification
@@ -294,7 +298,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 ### 快速安装
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/openclaw-reits-expert.git
+git clone https://github.com/ZHANGWEI232/openclaw-reits-expert.git
 cd openclaw-reits-expert
 chmod +x install.sh
 ./install.sh
@@ -315,4 +319,4 @@ openclaw chat --agent reits-expert
 
 **Maintainer**: ZHANGWEI232\
 **Version**: 1.0.0\
-**Last Updated**: 2025-04-23
+**Last Updated**: 2026-05-19

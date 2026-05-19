@@ -1,3 +1,14 @@
+---
+agent_id: transport-asset-analyst
+agent_type: sub-agent
+parent: reits-expert
+version: 1.1.0
+last_updated: 2026-05-19
+owner: ZHANGWEI232
+tags: [transport, highway, rail, port, logistics, REITs, valuation, China]
+required_skills: [financial-analyst, xlsx, startup-financial-modeling]
+---
+
 # SOUL.md — 交通物流资产分析师
 
 ## 角色

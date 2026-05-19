@@ -123,15 +123,47 @@ echo ""
 
 # Configure master agent permissions
 echo -e "${YELLOW}⚙️  Configuring master agent permissions...${NC}"
-MASTER_INDEX=0
+
+# Resolve master agent index dynamically (do not assume reits-expert is at index 0,
+# since the user may have pre-existing agents registered ahead of it).
+MASTER_INDEX=""
+
+# Strategy 1: parse `openclaw config get agents.list` as JSON via jq
+if command -v jq &> /dev/null; then
+    AGENTS_JSON=$(openclaw config get agents.list 2>/dev/null || echo "")
+    if [ -n "$AGENTS_JSON" ]; then
+        IDX=$(echo "$AGENTS_JSON" | jq -r 'map(.agentId == "reits-expert") | index(true) // empty' 2>/dev/null)
+        if [ -n "$IDX" ] && [[ "$IDX" =~ ^[0-9]+$ ]]; then
+            MASTER_INDEX=$IDX
+        fi
+    fi
+fi
+
+# Strategy 2: fall back to scraping `openclaw agents list` row position
+if [ -z "$MASTER_INDEX" ]; then
+    LINE_NO=$(openclaw agents list 2>/dev/null | grep -n "^[[:space:]]*reits-expert\b\|[[:space:]]reits-expert\b" | head -1 | cut -d: -f1)
+    if [ -n "$LINE_NO" ] && [[ "$LINE_NO" =~ ^[0-9]+$ ]]; then
+        MASTER_INDEX=$((LINE_NO - 1))
+    fi
+fi
+
+# Strategy 3: last-resort default
+if [ -z "$MASTER_INDEX" ] || ! [[ "$MASTER_INDEX" =~ ^[0-9]+$ ]]; then
+    echo -e "${YELLOW}⚠️  Could not auto-detect master agent index. Defaulting to 0.${NC}"
+    echo -e "${YELLOW}    If reits-expert is not at index 0, run the manual command shown below.${NC}"
+    MASTER_INDEX=0
+else
+    echo -e "${GREEN}   Detected reits-expert at index $MASTER_INDEX${NC}"
+fi
+
 SUBAGENTS='["energy-asset-analyst","utility-asset-analyst","transport-asset-analyst","property-asset-analyst","housing-asset-analyst","ops-supervisor","struct-designer","market-researcher","esg-analyst","report-writer"]'
 
 if openclaw config set "agents.list[$MASTER_INDEX].subagents.allowAgents" "$SUBAGENTS" --json 2>/dev/null; then
-    echo -e "${GREEN}✅ Master agent permissions configured${NC}"
+    echo -e "${GREEN}✅ Master agent permissions configured (index=$MASTER_INDEX)${NC}"
 else
     echo -e "${YELLOW}⚠️  Could not configure permissions automatically${NC}"
     echo -e "${YELLOW}   Please run manually:${NC}"
-    echo -e "   ${BLUE}openclaw config set agents.list[0].subagents.allowAgents '$SUBAGENTS' --json${NC}"
+    echo -e "   ${BLUE}openclaw config set agents.list[$MASTER_INDEX].subagents.allowAgents '$SUBAGENTS' --json${NC}"
 fi
 echo ""
 

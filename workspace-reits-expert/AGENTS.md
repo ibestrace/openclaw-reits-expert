@@ -13,7 +13,7 @@
 | **energy-asset-analyst** | 能源类资产分析师 | 能源资产洞察、估值建模（风电/光伏/水电/燃气/储能） | 风电、光伏、水电、燃气发电、储能 | financial-analyst, xlsx, startup-financial-modeling |
 | **utility-asset-analyst** | 公用事业资产分析师 | 公用事业资产洞察、特许经营权估值（供水/污水/供热/燃气/垃圾焚烧） | 原水、供水、污水处理、供热、供气、垃圾焚烧发电 | financial-analyst, xlsx, startup-financial-modeling |
 | **transport-asset-analyst** | 交通物流资产分析师 | 交通物流资产洞察、流量驱动估值（高速/地铁/港口/物流仓储） | 高速公路、地铁/轨道交通、港口、物流仓储 | financial-analyst, xlsx, startup-financial-modeling |
-| **property-asset-analyst** | 不动产资产分析师 | 不动产资产洞察、空间租赁估值（产业园/数据中心/商业/办公/酒店） | 产业园区、数据中心、工业厂房、购物中心、社区商业、奥特莱斯、办公楼、酒店 | financial-analyst, xlsx, startup-financial-modeling |
+| **property-asset-analyst** | 不动产资产分析师 | 不动产资产洞察、空间租赁估值（产业园/数据中心/商业/办公/酒店/城市更新） | 产业园区、数据中心、工业厂房、购物中心、社区商业、奥特莱斯、办公楼、酒店、城市更新 | financial-analyst, xlsx, startup-financial-modeling |
 | **housing-asset-analyst** | 租赁住房资产分析师 | 租赁住房资产洞察、政策约束估值（保租房/长租公寓） | 保障性租赁住房、长租公寓 | financial-analyst, xlsx, startup-financial-modeling |
 | ops-supervisor | 运营督导师 | 运营督导、存续期管理、风险预警 | 全资产类别 | financial-operations-expert, xlsx |
 | struct-designer | 结构设计师 | 交易结构设计、扩募退出 | 全资产类别 | financial-analyst, docx |
@@ -39,6 +39,8 @@
 
 当任务涉及资产评估时，我必须在调度前识别资产所属行业类别。识别逻辑如下：
 
+> **监管背景（2025-2026）**：2025年12月商业REITs试点启动后，购物中心、酒店、写字楼首次可直接作为公募REITs底层资产（不再需要依托产业园载体）；2025年版行业范围清单新增数据中心、城市供暖、农贸市场、城市更新、专业仓库。资产识别时需结合最新监管口径。
+
 ### 资产类别识别矩阵
 
 | 触发关键词/资产描述 | 对应行业分析师 | 资产类别 |
@@ -46,7 +48,7 @@
 | 风电、光伏、水电、燃气发电、储能、电站、电厂、新能源、可再生能源、绿电、碳中和 | `energy-asset-analyst` | 能源类 |
 | 供水、污水、污水处理、原水、供热、供气、燃气、垃圾焚烧、固废、水处理、水厂 | `utility-asset-analyst` | 公用事业类 |
 | 高速公路、收费公路、地铁、轨道交通、港口、码头、物流园、高标仓、冷链、仓储 | `transport-asset-analyst` | 交通物流类 |
-| 产业园、工业园区、数据中心、IDC、工业厂房、购物中心、商场、社区商业、底商、奥特莱斯、写字楼、办公楼、酒店 | `property-asset-analyst` | 不动产类 |
+| 产业园、工业园区、数据中心、IDC、工业厂房、购物中心、商场、社区商业、底商、奥特莱斯、写字楼、办公楼、酒店、城市更新 | `property-asset-analyst` | 不动产类 |
 | 保租房、保障性租赁住房、公租房、人才公寓、长租公寓、租赁住房、住房租赁 | `housing-asset-analyst` | 租赁住房类 |
 
 ### 识别规则

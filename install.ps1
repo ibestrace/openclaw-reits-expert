@@ -121,16 +121,63 @@ Write-Host ""
 
 # Configure master agent permissions
 Write-Host "⚙️  Configuring master agent permissions..." -ForegroundColor Yellow
-$MASTER_INDEX = 0
+
+# Resolve master agent index dynamically (do not assume reits-expert is at index 0,
+# since the user may have pre-existing agents registered ahead of it).
+$MASTER_INDEX = $null
+
+# Strategy 1: parse `openclaw config get agents.list` as JSON
+try {
+    $agentsJson = openclaw config get agents.list 2>$null
+    if ($agentsJson) {
+        $agents = $agentsJson | ConvertFrom-Json -ErrorAction Stop
+        for ($i = 0; $i -lt $agents.Count; $i++) {
+            if ($agents[$i].agentId -eq "reits-expert") {
+                $MASTER_INDEX = $i
+                break
+            }
+        }
+    }
+} catch {
+    # JSON parsing failed - fall through to strategy 2
+}
+
+# Strategy 2: fall back to scraping `openclaw agents list` row position
+if ($null -eq $MASTER_INDEX) {
+    try {
+        $agentsList = openclaw agents list 2>$null
+        if ($agentsList) {
+            $lines = $agentsList -split "`n"
+            for ($i = 0; $i -lt $lines.Count; $i++) {
+                if ($lines[$i] -match "\breits-expert\b") {
+                    $MASTER_INDEX = $i
+                    break
+                }
+            }
+        }
+    } catch {
+        # Both strategies failed
+    }
+}
+
+# Strategy 3: last-resort default
+if ($null -eq $MASTER_INDEX) {
+    Write-Host "⚠️  Could not auto-detect master agent index. Defaulting to 0." -ForegroundColor Yellow
+    Write-Host "   If reits-expert is not at index 0, run the manual command shown below." -ForegroundColor Yellow
+    $MASTER_INDEX = 0
+} else {
+    Write-Host "   Detected reits-expert at index $MASTER_INDEX" -ForegroundColor Green
+}
+
 $SUBAGENTS = '["energy-asset-analyst","utility-asset-analyst","transport-asset-analyst","property-asset-analyst","housing-asset-analyst","ops-supervisor","struct-designer","market-researcher","esg-analyst","report-writer"]'
 
 try {
     openclaw config set "agents.list[$MASTER_INDEX].subagents.allowAgents" $SUBAGENTS --json 2>$null
-    Write-Host "✅ Master agent permissions configured" -ForegroundColor Green
+    Write-Host "✅ Master agent permissions configured (index=$MASTER_INDEX)" -ForegroundColor Green
 } catch {
     Write-Host "⚠️  Could not configure permissions automatically" -ForegroundColor Yellow
     Write-Host "   Please run manually:" -ForegroundColor Yellow
-    Write-Host "   openclaw config set agents.list[0].subagents.allowAgents '$SUBAGENTS' --json" -ForegroundColor Cyan
+    Write-Host "   openclaw config set agents.list[$MASTER_INDEX].subagents.allowAgents '$SUBAGENTS' --json" -ForegroundColor Cyan
 }
 Write-Host ""
 
@@ -175,7 +222,14 @@ Write-Host "   '分析某产业园区REITs的存续期管理方案'" -Foreground
 Write-Host ""
 Write-Host "🎉 Setup complete! Happy analyzing!" -ForegroundColor Green
 
-# Pause at the end
-Write-Host ""
-Write-Host "Press any key to continue..." -ForegroundColor Gray
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# Pause at the end (only in interactive shells; skip in CI / non-interactive runs)
+$isInteractive = [Environment]::UserInteractive -and ($Host.Name -eq "ConsoleHost") -and (-not $env:CI)
+if ($isInteractive) {
+    Write-Host ""
+    Write-Host "Press any key to continue..." -ForegroundColor Gray
+    try {
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    } catch {
+        # ReadKey not supported in this host (e.g. ISE) - skip silently
+    }
+}
