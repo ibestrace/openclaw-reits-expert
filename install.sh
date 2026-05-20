@@ -1,15 +1,44 @@
 #!/bin/bash
 # OpenClaw REITs Expert System - Installation Script (Linux/macOS)
 # This script automates the installation of the REITs expert multi-agent system
+#
+# Usage: ./install.sh [--dry-run]
+#   --dry-run    Show what would be done without making any changes
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Parse arguments
+DRY_RUN=false
+for arg in "$@"; do
+    case "$arg" in
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [--dry-run]"
+            echo ""
+            echo "Options:"
+            echo "  --dry-run    Show what would be done without making changes"
+            exit 0
+            ;;
+    esac
+done
+
+# Colors for output (disable in non-tty or dry-run mode)
+if [ -t 1 ] && [ "$DRY_RUN" != true ]; then
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'
+    NC='\033[0m' # No Color
+else
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    NC=''
+fi
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -29,7 +58,11 @@ WORKSPACES=(
 )
 
 echo -e "${BLUE}================================================${NC}"
-echo -e "${BLUE}  OpenClaw REITs Expert System Installer${NC}"
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${BLUE}  OpenClaw REITs Expert System Installer${NC} ${YELLOW}[DRY RUN]${NC}"
+else
+    echo -e "${BLUE}  OpenClaw REITs Expert System Installer${NC}"
+fi
 echo -e "${BLUE}================================================${NC}"
 echo ""
 
@@ -60,8 +93,12 @@ echo -e "${YELLOW}📂 Creating workspace directories...${NC}"
 for ws in "${WORKSPACES[@]}"; do
     ws_path="$OPENCLAW_DIR/$ws"
     if [ ! -d "$ws_path" ]; then
-        mkdir -p "$ws_path"
-        echo -e "  ${GREEN}✓${NC} $ws"
+        if [ "$DRY_RUN" = true ]; then
+            echo -e "  ${YELLOW}∼${NC} $ws (would create)"
+        else
+            mkdir -p "$ws_path"
+            echo -e "  ${GREEN}✓${NC} $ws"
+        fi
     else
         echo -e "  ${YELLOW}⚠${NC} $ws (already exists)"
     fi
@@ -73,17 +110,25 @@ echo -e "${YELLOW}📋 Copying configuration files...${NC}"
 for ws in "${WORKSPACES[@]}"; do
     src_path="$SCRIPT_DIR/$ws"
     dest_path="$OPENCLAW_DIR/$ws"
-    
+
     if [ -f "$src_path/SOUL.md" ]; then
-        cp "$src_path/SOUL.md" "$dest_path/"
-        echo -e "  ${GREEN}✓${NC} $ws/SOUL.md"
+        if [ "$DRY_RUN" = true ]; then
+            echo -e "  ${YELLOW}∼${NC} $ws/SOUL.md (would copy)"
+        else
+            cp "$src_path/SOUL.md" "$dest_path/"
+            echo -e "  ${GREEN}✓${NC} $ws/SOUL.md"
+        fi
     else
         echo -e "  ${RED}✗${NC} $ws/SOUL.md (not found in source)"
     fi
-    
+
     if [ -f "$src_path/AGENTS.md" ]; then
-        cp "$src_path/AGENTS.md" "$dest_path/"
-        echo -e "  ${GREEN}✓${NC} $ws/AGENTS.md"
+        if [ "$DRY_RUN" = true ]; then
+            echo -e "  ${YELLOW}∼${NC} $ws/AGENTS.md (would copy)"
+        else
+            cp "$src_path/AGENTS.md" "$dest_path/"
+            echo -e "  ${GREEN}✓${NC} $ws/AGENTS.md"
+        fi
     else
         echo -e "  ${RED}✗${NC} $ws/AGENTS.md (not found in source)"
     fi
@@ -96,14 +141,19 @@ echo -e "${YELLOW}🤖 Registering agents with OpenClaw...${NC}"
 register_agent() {
     local name="$1"
     local workspace="$2"
-    
-    if openclaw agents list 2>/dev/null | grep -q "$name"; then
+
+    # Use word boundary to avoid partial matches (e.g., "reits-expert" matching "reits-expert-v2")
+    if openclaw agents list 2>/dev/null | grep -qw "$name"; then
         echo -e "  ${YELLOW}⚠${NC} $name (already registered)"
     else
-        if openclaw agents add "$name" --workspace "$workspace" 2>/dev/null; then
-            echo -e "  ${GREEN}✓${NC} $name"
+        if [ "$DRY_RUN" = true ]; then
+            echo -e "  ${YELLOW}∼${NC} $name (would register)"
         else
-            echo -e "  ${RED}✗${NC} $name (failed to register)"
+            if openclaw agents add "$name" --workspace "$workspace" 2>/dev/null; then
+                echo -e "  ${GREEN}✓${NC} $name"
+            else
+                echo -e "  ${RED}✗${NC} $name (failed to register)"
+            fi
         fi
     fi
 }
@@ -158,7 +208,10 @@ fi
 
 SUBAGENTS='["energy-asset-analyst","utility-asset-analyst","transport-asset-analyst","property-asset-analyst","housing-asset-analyst","ops-supervisor","struct-designer","market-researcher","esg-analyst","report-writer"]'
 
-if openclaw config set "agents.list[$MASTER_INDEX].subagents.allowAgents" "$SUBAGENTS" --json 2>/dev/null; then
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}∼  Would set master agent permissions (index=$MASTER_INDEX)${NC}"
+    echo -e "   ${BLUE}openclaw config set agents.list[$MASTER_INDEX].subagents.allowAgents '$SUBAGENTS' --json${NC}"
+elif openclaw config set "agents.list[$MASTER_INDEX].subagents.allowAgents" "$SUBAGENTS" --json 2>/dev/null; then
     echo -e "${GREEN}✅ Master agent permissions configured (index=$MASTER_INDEX)${NC}"
 else
     echo -e "${YELLOW}⚠️  Could not configure permissions automatically${NC}"
@@ -169,7 +222,10 @@ echo ""
 
 # Configure routing
 echo -e "${YELLOW}🌐 Configuring routing...${NC}"
-if openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json 2>/dev/null; then
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}∼  Would configure routing${NC}"
+    echo -e "   ${BLUE}openclaw config set bindings '[{\"agentId\": \"reits-expert\", \"match\": {}}]' --json${NC}"
+elif openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json 2>/dev/null; then
     echo -e "${GREEN}✅ Routing configured${NC}"
 else
     echo -e "${YELLOW}⚠️  Could not configure routing automatically${NC}"
@@ -180,10 +236,20 @@ echo ""
 
 # Verify installation
 echo -e "${BLUE}================================================${NC}"
-echo -e "${BLUE}  Installation Summary${NC}"
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${BLUE}  Dry Run Summary${NC}"
+else
+    echo -e "${BLUE}  Installation Summary${NC}"
+fi
 echo -e "${BLUE}================================================${NC}"
 echo ""
-echo -e "${GREEN}✅ REITs Expert System installation complete!${NC}"
+
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}∼  Dry run complete. No changes were made.${NC}"
+    echo -e "${YELLOW}   Run without --dry-run to perform the installation.${NC}"
+else
+    echo -e "${GREEN}✅ REITs Expert System installation complete!${NC}"
+fi
 echo ""
 
 # Show registered agents
@@ -201,4 +267,9 @@ echo -e "${BLUE}💡 Example Test Query:${NC}"
 echo -e "   ${YELLOW}'请对某10万千瓦风电项目进行估值分析'${NC}"
 echo -e "   ${YELLOW}'分析某产业园区REITs的存续期管理方案'${NC}"
 echo ""
-echo -e "${GREEN}🎉 Setup complete! Happy analyzing!${NC}"
+
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}🏁 End of dry run.${NC}"
+else
+    echo -e "${GREEN}🎉 Setup complete! Happy analyzing!${NC}"
+fi

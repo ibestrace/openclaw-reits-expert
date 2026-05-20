@@ -1,5 +1,11 @@
 # OpenClaw REITs Expert System - Installation Script (Windows PowerShell)
 # This script automates the installation of the REITs expert multi-agent system
+#
+# Usage: .\install.ps1 [-WhatIf]
+#   -WhatIf    Show what would be done without making any changes
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param()
 
 $ErrorActionPreference = "Stop"
 
@@ -21,7 +27,11 @@ $WORKSPACES = @(
 )
 
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  OpenClaw REITs Expert System Installer" -ForegroundColor Cyan
+if ($WhatIfPreference) {
+    Write-Host "  OpenClaw REITs Expert System Installer [WHAT IF]" -ForegroundColor Cyan
+} else {
+    Write-Host "  OpenClaw REITs Expert System Installer" -ForegroundColor Cyan
+}
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -43,9 +53,13 @@ if (Test-Path $OPENCLAW_DIR) {
     Write-Host "✅ Found OpenClaw directory: $OPENCLAW_DIR" -ForegroundColor Green
 } else {
     Write-Host "⚠️  OpenClaw directory not found at $OPENCLAW_DIR" -ForegroundColor Yellow
-    Write-Host "   Creating directory..." -ForegroundColor Yellow
-    New-Item -ItemType Directory -Path $OPENCLAW_DIR -Force | Out-Null
-    Write-Host "✅ Created: $OPENCLAW_DIR" -ForegroundColor Green
+    if (-not $WhatIfPreference) {
+        Write-Host "   Creating directory..." -ForegroundColor Yellow
+        New-Item -ItemType Directory -Path $OPENCLAW_DIR -Force | Out-Null
+        Write-Host "✅ Created: $OPENCLAW_DIR" -ForegroundColor Green
+    } else {
+        Write-Host "   ∼ Would create directory" -ForegroundColor Yellow
+    }
 }
 Write-Host ""
 
@@ -54,8 +68,12 @@ Write-Host "📂 Creating workspace directories..." -ForegroundColor Yellow
 foreach ($ws in $WORKSPACES) {
     $wsPath = Join-Path $OPENCLAW_DIR $ws
     if (!(Test-Path $wsPath)) {
-        New-Item -ItemType Directory -Path $wsPath -Force | Out-Null
-        Write-Host "  ✓ $ws" -ForegroundColor Green
+        if (-not $WhatIfPreference) {
+            New-Item -ItemType Directory -Path $wsPath -Force | Out-Null
+            Write-Host "  ✓ $ws" -ForegroundColor Green
+        } else {
+            Write-Host "  ∼ $ws (would create)" -ForegroundColor Yellow
+        }
     } else {
         Write-Host "  ⚠ $ws (already exists)" -ForegroundColor Yellow
     }
@@ -72,15 +90,23 @@ foreach ($ws in $WORKSPACES) {
     $agentsFile = Join-Path $srcPath "AGENTS.md"
     
     if (Test-Path $soulFile) {
-        Copy-Item $soulFile $destPath -Force
-        Write-Host "  ✓ $ws/SOUL.md" -ForegroundColor Green
+        if (-not $WhatIfPreference) {
+            Copy-Item $soulFile $destPath -Force
+            Write-Host "  ✓ $ws/SOUL.md" -ForegroundColor Green
+        } else {
+            Write-Host "  ∼ $ws/SOUL.md (would copy)" -ForegroundColor Yellow
+        }
     } else {
         Write-Host "  ✗ $ws/SOUL.md (not found in source)" -ForegroundColor Red
     }
-    
+
     if (Test-Path $agentsFile) {
-        Copy-Item $agentsFile $destPath -Force
-        Write-Host "  ✓ $ws/AGENTS.md" -ForegroundColor Green
+        if (-not $WhatIfPreference) {
+            Copy-Item $agentsFile $destPath -Force
+            Write-Host "  ✓ $ws/AGENTS.md" -ForegroundColor Green
+        } else {
+            Write-Host "  ∼ $ws/AGENTS.md (would copy)" -ForegroundColor Yellow
+        }
     } else {
         Write-Host "  ✗ $ws/AGENTS.md (not found in source)" -ForegroundColor Red
     }
@@ -92,14 +118,19 @@ Write-Host "🤖 Registering agents with OpenClaw..." -ForegroundColor Yellow
 
 function Register-Agent {
     param($Name, $Workspace)
-    
+
     try {
         $agentsList = openclaw agents list 2>$null
-        if ($agentsList -match $Name) {
+        # Use word boundary to avoid partial matches (e.g., "reits-expert" matching "reits-expert-v2")
+        if ($agentsList -match "\b$Name\b") {
             Write-Host "  ⚠ $Name (already registered)" -ForegroundColor Yellow
         } else {
-            openclaw agents add $Name --workspace $Workspace 2>$null
-            Write-Host "  ✓ $Name" -ForegroundColor Green
+            if (-not $WhatIfPreference) {
+                openclaw agents add $Name --workspace $Workspace 2>$null
+                Write-Host "  ✓ $Name" -ForegroundColor Green
+            } else {
+                Write-Host "  ∼ $Name (would register)" -ForegroundColor Yellow
+            }
         }
     } catch {
         Write-Host "  ✗ $Name (failed to register)" -ForegroundColor Red
@@ -171,34 +202,54 @@ if ($null -eq $MASTER_INDEX) {
 
 $SUBAGENTS = '["energy-asset-analyst","utility-asset-analyst","transport-asset-analyst","property-asset-analyst","housing-asset-analyst","ops-supervisor","struct-designer","market-researcher","esg-analyst","report-writer"]'
 
-try {
-    openclaw config set "agents.list[$MASTER_INDEX].subagents.allowAgents" $SUBAGENTS --json 2>$null
-    Write-Host "✅ Master agent permissions configured (index=$MASTER_INDEX)" -ForegroundColor Green
-} catch {
-    Write-Host "⚠️  Could not configure permissions automatically" -ForegroundColor Yellow
-    Write-Host "   Please run manually:" -ForegroundColor Yellow
+if ($WhatIfPreference) {
+    Write-Host "∼  Would set master agent permissions (index=$MASTER_INDEX)" -ForegroundColor Yellow
     Write-Host "   openclaw config set agents.list[$MASTER_INDEX].subagents.allowAgents '$SUBAGENTS' --json" -ForegroundColor Cyan
+} else {
+    try {
+        openclaw config set "agents.list[$MASTER_INDEX].subagents.allowAgents" $SUBAGENTS --json 2>$null
+        Write-Host "✅ Master agent permissions configured (index=$MASTER_INDEX)" -ForegroundColor Green
+    } catch {
+        Write-Host "⚠️  Could not configure permissions automatically" -ForegroundColor Yellow
+        Write-Host "   Please run manually:" -ForegroundColor Yellow
+        Write-Host "   openclaw config set agents.list[$MASTER_INDEX].subagents.allowAgents '$SUBAGENTS' --json" -ForegroundColor Cyan
+    }
 }
 Write-Host ""
 
 # Configure routing
 Write-Host "🌐 Configuring routing..." -ForegroundColor Yellow
-try {
-    openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json 2>$null
-    Write-Host "✅ Routing configured" -ForegroundColor Green
-} catch {
-    Write-Host "⚠️  Could not configure routing automatically" -ForegroundColor Yellow
-    Write-Host "   Please run manually:" -ForegroundColor Yellow
+if ($WhatIfPreference) {
+    Write-Host "∼  Would configure routing" -ForegroundColor Yellow
     Write-Host "   openclaw config set bindings '[{`"agentId`": `"reits-expert`", `"match`": {}}]' --json" -ForegroundColor Cyan
+} else {
+    try {
+        openclaw config set bindings '[{"agentId": "reits-expert", "match": {}}]' --json 2>$null
+        Write-Host "✅ Routing configured" -ForegroundColor Green
+    } catch {
+        Write-Host "⚠️  Could not configure routing automatically" -ForegroundColor Yellow
+        Write-Host "   Please run manually:" -ForegroundColor Yellow
+        Write-Host "   openclaw config set bindings '[{`"agentId`": `"reits-expert`", `"match`": {}}]' --json" -ForegroundColor Cyan
+    }
 }
 Write-Host ""
 
 # Verify installation
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Installation Summary" -ForegroundColor Cyan
+if ($WhatIfPreference) {
+    Write-Host "  What If Summary" -ForegroundColor Cyan
+} else {
+    Write-Host "  Installation Summary" -ForegroundColor Cyan
+}
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "✅ REITs Expert System installation complete!" -ForegroundColor Green
+
+if ($WhatIfPreference) {
+    Write-Host "∼  What if complete. No changes were made." -ForegroundColor Yellow
+    Write-Host "   Run without -WhatIf to perform the installation." -ForegroundColor Yellow
+} else {
+    Write-Host "✅ REITs Expert System installation complete!" -ForegroundColor Green
+}
 Write-Host ""
 
 # Show registered agents
@@ -220,7 +271,12 @@ Write-Host "💡 Example Test Query:" -ForegroundColor Cyan
 Write-Host "   '请对某10万千瓦风电项目进行估值分析'" -ForegroundColor Yellow
 Write-Host "   '分析某产业园区REITs的存续期管理方案'" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "🎉 Setup complete! Happy analyzing!" -ForegroundColor Green
+
+if ($WhatIfPreference) {
+    Write-Host "🏁 End of what if." -ForegroundColor Yellow
+} else {
+    Write-Host "🎉 Setup complete! Happy analyzing!" -ForegroundColor Green
+}
 
 # Pause at the end (only in interactive shells; skip in CI / non-interactive runs)
 $isInteractive = [Environment]::UserInteractive -and ($Host.Name -eq "ConsoleHost") -and (-not $env:CI)
