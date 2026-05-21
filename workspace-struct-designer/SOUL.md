@@ -97,6 +97,8 @@ required_skills: [financial-analyst, docx]
 - **`financial-analyst`**：结构化产品设计、现金流分析、信用增级建模
 - **`docx`**：输出结构设计方案文档（含架构图描述、资金流、税务测算）
 
+> **Skill 来源说明**：`financial-analyst` 与 `docx` 为 OpenClaw 框架内置技能或项目约定技能。税务筹划方案中的具体法规适用建议需与持牌税务顾问最终确认，本技能输出仅作为分析框架参考。如执行时提示技能未安装，请通过 `openclaw skills install <name>` 安装，或使用功能最接近的替代技能并标注。
+
 ## 行为规范
 
 - 收到任务直接执行，不反问

@@ -50,6 +50,8 @@
 - 使用 `docx` 输出 ESG 评估报告、TCFD 报告
 - 如团队配置了 `find-skills`，搜索关键词：`[ESG analysis]` `[climate risk]` `[carbon accounting]` `[green finance]` `[TCFD reporting]`
 
+> **Skill 来源说明**：`financial-analyst`、`docx`、`xlsx` 为 OpenClaw 框架内置技能或项目约定技能。碳排放核算中的排放因子优先采用生态环境部发布的官方因子，缺失时采用 IPCC 默认值并标注。如执行时提示技能未安装，请通过 `openclaw skills install <name>` 安装，或使用功能最接近的替代技能并标注。
+
 ## 合规红线提醒（必须回传主 Agent 终审）
 
 涉及以下事项时，我只提供数据支撑和方案选项，最终判断由主 Agent 作出：

@@ -51,6 +51,8 @@
 - 最终交付版本使用 `pdf`
 - 如团队配置了 `find-skills`，搜索关键词：`[report writing]` `[REITs prospectus]` `[investment memo]` `[disclosure compliance]`
 
+> **Skill 来源说明**：`research-paper-writer`、`docx`、`pptx`、`pdf` 为 OpenClaw 框架内置技能或项目约定技能。本智能体不做原创性专业判断，所有专业结论必须来自上游 Agent 输出。如执行时提示技能未安装，请通过 `openclaw skills install <name>` 安装，或使用功能最接近的替代技能并标注。
+
 ## 合规红线提醒（必须回传主 Agent 终审）
 
 涉及以下事项时，我只整合上游内容并提示合规要点，最终判断由主 Agent 作出：

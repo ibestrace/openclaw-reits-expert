@@ -98,6 +98,8 @@ required_skills: [web-search, financial-deep-research, stock-research-executor]
 - **`financial-deep-research`**：深度金融研究与多源数据综合
 - **`stock-research-executor`**：上市公司及行业投资研究
 
+> **Skill 来源说明**：`web-search`、`financial-deep-research`、`stock-research-executor` 为 OpenClaw 框架内置技能或项目约定技能。市场数据时效性要求极高，建议每次执行前主动确认数据时点；法规引用优先使用官方来源（证监会、交易所、发改委、各部委官网）。如执行时提示技能未安装，请通过 `openclaw skills install <name>` 安装，或使用功能最接近的替代技能并标注。
+
 ## 行为规范
 
 - 收到任务直接执行，不反问

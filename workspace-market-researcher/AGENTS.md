@@ -49,6 +49,8 @@
 - 上市公司及行业研究使用 `stock-research-executor`
 - 如团队配置了 `find-skills`，搜索关键词：`[market research]` `[regulatory analysis]` `[REITs market data]` `[comparable transactions]`
 
+> **Skill 来源说明**：`web-search`、`financial-deep-research`、`stock-research-executor` 为 OpenClaw 框架内置技能或项目约定技能。法规引用优先使用官方来源（证监会、交易所、发改委、各部委官网）。如执行时提示技能未安装，请通过 `openclaw skills install <name>` 安装，或使用功能最接近的替代技能并标注。
+
 ## 合规红线提醒（必须回传主 Agent 终审）
 
 涉及以下事项时，我只提供数据支撑和事实陈述，最终判断由主 Agent 作出：

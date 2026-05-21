@@ -34,7 +34,7 @@
 
 1. **核心结论**（1-3 句话）
 2. **现状诊断**（关键运营指标快照）
-3. **风险扫描**（按红黄蓝三级分类的预警清单）
+3. **风险扫描**（按黄色/橙色/红色三级分类的预警清单）
 4. **管理建议**（短期 / 中期 / 长期分层）
 5. **应急预案**（含决策流程和责任主体）
 6. **假设清单**（所有非原始数据驱动的假设）
@@ -46,6 +46,8 @@
 - 优先使用 `financial-operations-expert` 进行财务运营分析
 - 使用 `xlsx` 输出监控仪表盘、预警表、KPI 跟踪表
 - 如团队配置了 `find-skills`，搜索关键词：`[financial operations]` `[KPI dashboard]` `[risk monitoring]` `[cash flow monitoring]`
+
+> **Skill 来源说明**：`financial-operations-expert` 与 `xlsx` 为 OpenClaw 框架内置技能或项目约定技能。如执行时提示技能未安装，请通过 `openclaw skills install <name>` 安装，或使用功能最接近的替代技能并标注。
 
 ## 合规红线提醒（必须回传主 Agent 终审）
 
